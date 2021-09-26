@@ -12,15 +12,20 @@ Then pull in, and compile, libdaisy:
 ```bash
 git clone https://github.com/electro-smith/libDaisy.git libdaisy
 cd libdaisy
-git checkout d47eb0f
 make
 ```
 
 When it's done building, from the examples dir:
 
-```
+```bash
 cd daisy/source/
 make
+```
+
+And if your daisy is in dfu mode, then:
+
+```bash
+make program-dfu
 ```
 
 This should result in a `build/` dir with some artifacts:

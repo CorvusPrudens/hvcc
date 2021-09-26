@@ -14,9 +14,9 @@ Heavy_{{name}} hv(SAMPLE_RATE);
 
 void ProcessControls();
 
-void audiocallback(float **in, float **out, size_t size)
+void audiocallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size)
 {
-    hv.process(in, out, size);
+    hv.process((float**) in, out, size);
     ProcessControls();
 }
 
@@ -54,31 +54,30 @@ int main(void)
 void ProcessControls()
 {
     {% if board != 'seed' %}
-    hardware->DebounceControls();
-    hardware->UpdateAnalogControls();
+    hardware->ProcessAllControls();
     {% endif %}
 
     for (int i = 0; i < num_params; i++)
     {
-	HvParameterInfo info;
-	hv.getParameterInfo(i, &info);
+        HvParameterInfo info;
+        hv.getParameterInfo(i, &info);
 
-    {% if board == 'seed' %}
-    hv.sendFloatToReceiver(info.hash, 0.f);
-    {% endif %}
+        {% if board == 'seed' %}
+        hv.sendFloatToReceiver(info.hash, 0.f);
+        {% endif %}
 
-	std::string name(info.name);
+        std::string name(info.name);
 
-	for (int j = 0; j < DaisyNumParameters; j++){
-	    if (DaisyParameters[j].name == name)
-	    {
-		float sig = DaisyParameters[j].Process();
+        for (int j = 0; j < DaisyNumParameters; j++){
+            if (DaisyParameters[j].name == name)
+            {
+            float sig = DaisyParameters[j].Process();
 
-		if (DaisyParameters[j].mode == ENCODER || DaisyParameters[j].mode == KNOB)
-		    hv.sendFloatToReceiver(info.hash, sig);
-		else if(sig)
-		    hv.sendBangToReceiver(info.hash);
-	    }
-	}
+            if (DaisyParameters[j].mode == ENCODER || DaisyParameters[j].mode == KNOB)
+                hv.sendFloatToReceiver(info.hash, sig);
+            else if(sig)
+                hv.sendBangToReceiver(info.hash);
+            }
+        }
     }
 }

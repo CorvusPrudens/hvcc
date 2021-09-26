@@ -46,28 +46,32 @@ struct DaisyHvParam{
 	{
 	    case ENCODER:
 	    {
-		Encoder* enc = static_cast<Encoder*>(control);
-		return enc->Increment();
+            Encoder* enc = static_cast<Encoder*>(control);
+            return enc->Increment();
 	    }
 
 	    case SWITCH:
 	    {
-		Switch* sw = static_cast<Switch*>(control);
-		return sw->RisingEdge();
+            Switch* sw = static_cast<Switch*>(control);
+            return sw->RisingEdge();
 	    }
 
 	    case KNOB:
 	    {
-		AnalogControl* knob = static_cast<AnalogControl*>(control);
-		return knob->Process();
+            AnalogControl* knob = static_cast<AnalogControl*>(control);
+            return knob->Process();
 	    }
 
 	    case GATE:
 	    {
 	        GateIn* gate = static_cast<GateIn*>(control);
-		return gate->Trig();
+		    return gate->Trig();
 	    }
 
+        // case KEY:
+        // {
+
+        // }
 	}
 
 	return 0.f;
@@ -118,6 +122,25 @@ DaisyHvParam DaisyParameters[15] = {
     {"Switch5",   &boardsHardware.switches[4], SWITCH},
     {"Switch6",   &boardsHardware.switches[5], SWITCH},
     {"Switch7",   &boardsHardware.switches[6], SWITCH},
+};
+    {% elif board == 'field' %}
+int DaisyNumParameters = 15;
+DaisyHvParam DaisyParameters[15] = {
+    {"Gate1",     &boardsHardware.gate_in, GATE},
+    {"Ctrl1",     &boardsHardware.cv[0],   KNOB},
+    {"Ctrl2",     &boardsHardware.cv[1],   KNOB},
+    {"Ctrl3",     &boardsHardware.cv[2],   KNOB},
+    {"Ctrl4",     &boardsHardware.cv[3],   KNOB},
+    {"Knob1",     &boardsHardware.knob[0], KNOB},
+    {"Knob2",     &boardsHardware.knob[1], KNOB},
+    {"Knob3",     &boardsHardware.knob[2], KNOB},
+    {"Knob4",     &boardsHardware.knob[3], KNOB},
+    {"Knob5",     &boardsHardware.knob[4], KNOB},
+    {"Knob6",     &boardsHardware.knob[5], KNOB},
+    {"Knob7",     &boardsHardware.knob[6], KNOB},
+    {"Knob8",     &boardsHardware.knob[7], KNOB},
+    {"Switch1",   &boardsHardware.sw[0],   SWITCH},
+    {"Switch2",   &boardsHardware.sw[1],   SWITCH},
 };
     {% endif %}
 
