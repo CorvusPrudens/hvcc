@@ -59,6 +59,17 @@ void UpdateLeds(float *knob_vals)
     }
     hardware->led_driver.SwapBuffersAndTransmit();
 }
+
+void UpdateCV(uint16_t *cv_vals)
+{
+    hardware->SetCvOut1(cv_vals[0]);
+    hardware->SetCvOut2(cv_vals[1]);
+}
+
+void UpdateGate(uint8_t gate)
+{
+    dsy_gpio_write(&hardware->gate_out, gate);
+}
 {% endif %}
 
 static void sendHook(HeavyContextInterface *c, const char *receiverName, uint32_t receiverHash, const HvMessage * m) {
@@ -99,6 +110,18 @@ static void sendHook(HeavyContextInterface *c, const char *receiverName, uint32_
     {
         kvals[7] = msg_getFloat(m, 0);
     }
+    else if (receiverName == "Ctrlout1")
+    {
+        cvvals[0] = (uint16_t) roundf(msg_getFloat(m, 0) * 4096.0f);
+    }
+    else if (receiverName == "Ctrlout2")
+    {
+        cvvals[1] = (uint16_t) roundf(msg_getFloat(m, 0) * 4096.0f);
+    }
+    else if (receiverName == "Gate1out")
+    {
+        gate1_out = (uint8_t) msg_getFloat(m, 0);
+    }
 
 {% endif %}
 
@@ -128,6 +151,8 @@ int main(void)
         hardware->DisplayControls(false);
         {% elif board == 'field' %}
         UpdateLeds(kvals);
+        UpdateCV(cvvals);
+        UpdateGate(gate1_out);
         {% endif %}
     }
 }

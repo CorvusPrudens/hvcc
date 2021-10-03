@@ -126,6 +126,8 @@ DaisyHvParam DaisyParameters[15] = {
 };
     {% elif board == 'field' %}
 float kvals[8];
+uint16_t cvvals[2];
+uint8_t gate1_out;
 int DaisyNumParameters = 15;
 DaisyHvParam DaisyParameters[15] = {
     {"Gate1",     &boardsHardware.gate_in, GATE},
