@@ -20,9 +20,88 @@ void audiocallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, s
     ProcessControls();
 }
 
+{% if board =='field' %}
+void UpdateLeds(float *knob_vals)
+{
+    // knob_vals is exactly 8 members
+    size_t knob_leds[] = {
+        DaisyField::LED_KNOB_1,
+        DaisyField::LED_KNOB_2,
+        DaisyField::LED_KNOB_3,
+        DaisyField::LED_KNOB_4,
+        DaisyField::LED_KNOB_5,
+        DaisyField::LED_KNOB_6,
+        DaisyField::LED_KNOB_7,
+        DaisyField::LED_KNOB_8,
+    };
+    size_t keyboard_leds[] = {
+        DaisyField::LED_KEY_A1,
+        DaisyField::LED_KEY_A2,
+        DaisyField::LED_KEY_A3,
+        DaisyField::LED_KEY_A4,
+        DaisyField::LED_KEY_A5,
+        DaisyField::LED_KEY_A6,
+        DaisyField::LED_KEY_A7,
+        DaisyField::LED_KEY_A8,
+        DaisyField::LED_KEY_B2,
+        DaisyField::LED_KEY_B3,
+        DaisyField::LED_KEY_B5,
+        DaisyField::LED_KEY_B6,
+        DaisyField::LED_KEY_B7,
+    };
+    for(size_t i = 0; i < 8; i++)
+    {
+        hardware->led_driver.SetLed(knob_leds[i], knob_vals[i]);
+    }
+    for(size_t i = 0; i < 13; i++)
+    {
+        hardware->led_driver.SetLed(keyboard_leds[i], 1.f);
+    }
+    hardware->led_driver.SwapBuffersAndTransmit();
+}
+{% endif %}
+
 static void sendHook(HeavyContextInterface *c, const char *receiverName, uint32_t receiverHash, const HvMessage * m) {
   // Do something with message sent from Pd patch through
   // [send receiverName @hv_event] object(s)
+
+{% if board =='field' %}
+
+    if (receiverName == "Led1")
+    {
+        kvals[0] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led2")
+    {
+        kvals[1] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led3")
+    {
+        kvals[2] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led4")
+    {
+        kvals[3] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led5")
+    {
+        kvals[4] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led6")
+    {
+        kvals[5] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led7")
+    {
+        kvals[6] = msg_getFloat(m, 0);
+    }
+    else if (receiverName == "Led8")
+    {
+        kvals[7] = msg_getFloat(m, 0);
+    }
+
+{% endif %}
+
 }
 
 int main(void)
@@ -47,6 +126,8 @@ int main(void)
     {
         {% if board == 'patch' %}
         hardware->DisplayControls(false);
+        {% elif board == 'field' %}
+        UpdateLeds(kvals);
         {% endif %}
     }
 }

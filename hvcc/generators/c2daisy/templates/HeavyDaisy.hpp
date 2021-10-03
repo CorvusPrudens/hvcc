@@ -39,42 +39,43 @@ struct DaisyHvParam{
 
     float Process()
     {
-	if (control == nullptr)
-	    return 0.f;
+        if (control == nullptr)
+            return 0.f;
 
-	switch (mode)
-	{
-	    case ENCODER:
-	    {
-            Encoder* enc = static_cast<Encoder*>(control);
-            return enc->Increment();
-	    }
+        switch (mode)
+        {
+            case ENCODER:
+            {
+                Encoder* enc = static_cast<Encoder*>(control);
+                return enc->Increment();
+            }
 
-	    case SWITCH:
-	    {
-            Switch* sw = static_cast<Switch*>(control);
-            return sw->RisingEdge();
-	    }
+            case SWITCH:
+            {
+                Switch* sw = static_cast<Switch*>(control);
+                return sw->RisingEdge();
+            }
 
-	    case KNOB:
-	    {
-            AnalogControl* knob = static_cast<AnalogControl*>(control);
-            return knob->Process();
-	    }
+            case KNOB:
+            {
+                AnalogControl* knob = static_cast<AnalogControl*>(control);
+                return knob->Process();
+            }
 
-	    case GATE:
-	    {
-	        GateIn* gate = static_cast<GateIn*>(control);
-		    return gate->Trig();
-	    }
+            case GATE:
+            {
+                GateIn* gate = static_cast<GateIn*>(control);
+                // return gate->Trig();
+                return gate->State();
+            }
 
-        // case KEY:
-        // {
+            // case KEY:
+            // {
 
-        // }
-	}
+            // }
+        }
 
-	return 0.f;
+        return 0.f;
     }
 };
 
@@ -124,6 +125,7 @@ DaisyHvParam DaisyParameters[15] = {
     {"Switch7",   &boardsHardware.switches[6], SWITCH},
 };
     {% elif board == 'field' %}
+float kvals[8];
 int DaisyNumParameters = 15;
 DaisyHvParam DaisyParameters[15] = {
     {"Gate1",     &boardsHardware.gate_in, GATE},
